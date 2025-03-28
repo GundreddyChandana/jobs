@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Job Recommendation</title>
+</head>
+<body>
+    <h1>Enter Skills to Get Job Recommendations</h1>
+    <input type="text" id="skills" placeholder="Enter skills (e.g. Python, SQL)">
+    <button onclick="getRecommendations()">Search Jobs</button>
+    
+    <h2>Recommended Jobs:</h2>
+    <ul id="jobList"></ul>
+
+    <script>
+        function getRecommendations() {
+            const skills = document.getElementById("skills").value;
+            fetch("/recommend", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ skills: skills })
+            })
+            .then(response => response.json())
+            .then(data => {
+                let jobList = document.getElementById("jobList");
+                jobList.innerHTML = "";
+
+                if (data.status === "success") {
+                    data.jobs.forEach(job => {
+                        let li = document.createElement("li");
+                        li.textContent = `${job.jobTitle} - ${job.location} (${job.jobType}) | Budget: ${job.minBudget} - ${job.maxBudget}`;
+                        jobList.appendChild(li);
+                    });
+                } else {
+                    jobList.innerHTML = `<li>${data.message}</li>`;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
