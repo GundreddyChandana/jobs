@@ -1,11 +1,13 @@
 from flask import Flask, request, jsonify, render_template
 import pandas as pd
+import pickle
 import re
 
 app = Flask(__name__)
 
-# Load the dataset
-df = pd.read_csv("Jobs_Dataset.csv")
+# Load the dataset from a pickle file
+with open("Jobs_Dataset.pkl", "rb") as file:
+    df = pickle.load(file)
 
 # Function to clean and normalize skills
 def clean_skills(skills):
@@ -24,7 +26,7 @@ def recommend_jobs(user_skills):
     
     # Convert user skills into a set
     user_skills = set(user_skills.lower().replace('"', '').split(", "))
-    
+
     print("User entered skills:", user_skills)  # Debug print
 
     # Ensure correct skill matching
